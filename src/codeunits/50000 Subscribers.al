@@ -15,13 +15,27 @@ codeunit 50000 Subscribers
         end;
     end;
 
-    [EventSubscriber(ObjectType::Codeunit, Codeunit::"Document Attachment Mgmt", OnAfterIsServiceDocumentFlow, '', false, false)]
-    local procedure OnAfterIsServiceDocumentFlow(TableNo: Integer; var IsDocumentFlow: Boolean)
+    [EventSubscriber(ObjectType::Codeunit, Codeunit::"Document Attachment Mgmt", OnAfterTableHasNumberFieldPrimaryKey, '', false, false)]
+    local procedure OnAfterTableHasNumberFieldPrimaryKey(TableNo: Integer; var Result: Boolean; var FieldNo: Integer)
     begin
-        if TableNo in [Database::"Service Header",
-                        Database::"Service Shipment Header"] then
-            IsDocumentFlow := true
-        else
-            IsDocumentFlow := false;
+        case TableNo of
+            database::"Service Shipment Header":
+                begin
+                    FieldNo := 44; // 3
+                    Result := true;
+                end;
+        end;
     end;
+    // [EventSubscriber(ObjectType::Page, Page::"Document Attachment Details", OnAfterOpenForRecRef, '', false, false)]
+    // local procedure OnAfterOpenForRecRef(var DocumentAttachment: Record "Document Attachment"; var RecRef: RecordRef)
+    // begin
+    //     SetRelatedAttachmentsFilterForServiceShipmentHeader(RecRef.Number(), DocumentAttachment);
+    // end;
+
+    // local procedure SetRelatedAttachmentsFilterForServiceShipmentHeader(TableNo: Integer; var DocumentAttachment: Record "Document Attachment")
+    // var
+    //     myInt: Integer;
+    // begin
+
+    // end;
 }

@@ -8,8 +8,8 @@ pageextension 50002 PostedServiceShipmentsExBase extends "Posted Service Shipmen
             {
                 ApplicationArea = Service;
                 Caption = 'Attachments';
-                SubPageLink = "Table ID" = const(Database::"Service Shipment Header"),
-                              "No." = field("No.");
+                SubPageLink = "Table ID" = const(Database::"Service Header"),
+                              "No." = field("Order No.");
             }
         }
     }
