@@ -57,7 +57,30 @@ pageextension 50000 CustomerListSqBase extends "Customer List"
         }
     }
     trigger OnOpenPage()
+    var
+        Customer: Record Customer;
+        TempCustomer: Record Customer temporary;
+        RecRef: RecordRef;
+        FRef: FieldRef;
+        FielNo: Integer;
     begin
-        Codeunit.Run(Codeunit::"JSON Management Code")
+        //Codeunit.Run(Codeunit::"JSON Management Code")
+        //RecRef.Open(Database::Customer);
+        //if Customer.Get('10000') then;
+        //RecRef.GetTable(Customer);
+        // if RecRef.Find('-') then
+        //     Message('Find First Record %1', RecRef.Count)
+        // else
+        //     Message('Not Find Record');
+        if Customer.FindSet() then
+            repeat
+                TempCustomer.Init();
+                TempCustomer.Insert();
+                TempCustomer.Validate("No.", Customer."No.");
+                TempCustomer.Validate(Name, Customer.Name);
+            until Customer.Next() = 0;
+        RecRef.GetTable(TempCustomer);
+        if RecRef.Find('-') then
+            Message(Format(RecRef.Count));
     end;
 }
