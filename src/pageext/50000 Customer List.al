@@ -54,15 +54,31 @@ pageextension 50000 CustomerListSqBase extends "Customer List"
                     Codeunit.Run(Codeunit::"JSON Management Code")
                 end;
             }
+            action(GetCuurentClienType)
+            {
+                ApplicationArea = All;
+                Caption = 'Get Current Client Type';
+                Promoted = true;
+                PromotedCategory = Category6;
+                trigger OnAction()
+                begin
+                    if CurrentClientType = ClientType::Phone then
+                        Message('Phone')
+                    else
+                        Message('Other');
+                end;
+
+            }
         }
     }
     trigger OnOpenPage()
     var
-        Customer: Record Customer;
+        Customer, MarkedCustomer : Record Customer;
         TempCustomer: Record Customer temporary;
         RecRef: RecordRef;
         FRef: FieldRef;
         FielNo: Integer;
+        TotalCreditLimit: Decimal;
     begin
         //Codeunit.Run(Codeunit::"JSON Management Code")
         //RecRef.Open(Database::Customer);
@@ -72,15 +88,38 @@ pageextension 50000 CustomerListSqBase extends "Customer List"
         //     Message('Find First Record %1', RecRef.Count)
         // else
         //     Message('Not Find Record');
+        // if Customer.FindSet() then
+        //     repeat
+        //         TempCustomer.Init();
+        //         TempCustomer.Insert();
+        //         TempCustomer.Validate("No.", Customer."No.");
+        //         TempCustomer.Validate(Name, Customer.Name);
+        //     until Customer.Next() = 0;
+        // RecRef.GetTable(TempCustomer);
+        // if RecRef.Find('-') then
+        //     Message(Format(RecRef.Count));
+        // Customer.Reset();
+        // if Customer.FindSet() then begin
+        //     Customer.CalcSums("Credit Limit (LCY)");
+        //     Message('%1', Customer."No.");
+        //     TotalCreditLimit := Customer."Credit Limit (LCY)";
+        //     Message('tota credit limit %1', TotalCreditLimit);
+        // end;
+
+        // Test Mark and MarkedOnly
+        Customer.SetFilter("No.", '%1|%2|%3', '10000', '20000', '30000');
         if Customer.FindSet() then
             repeat
-                TempCustomer.Init();
-                TempCustomer.Insert();
-                TempCustomer.Validate("No.", Customer."No.");
-                TempCustomer.Validate(Name, Customer.Name);
+                if Customer."No." = '20000' then
+                    Customer.Mark(true);
             until Customer.Next() = 0;
-        RecRef.GetTable(TempCustomer);
-        if RecRef.Find('-') then
-            Message(Format(RecRef.Count));
+        //Customer.Reset();
+        //Clear(Customer);
+        if Customer.MarkedOnly(true) then
+            if Customer.FindSet() then
+                repeat
+                    Message('%1', Customer."No.");
+                until Customer.Next() = 0;
+        Customer.ClearMarks();
     end;
 }
